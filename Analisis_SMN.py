@@ -48,38 +48,46 @@ def separar_viento(campo_viento: str) -> dict: #Esta función ya nos la pedía e
 #===================LEO LOS DATOS Y LOS PASO A UN DICCIONARIO===================
 def leer_observaciones(ruta:str) -> dict:
     diccionario= {} #En este diccionario se van a ir almacenando los datos de cada ciudad, con su nombre como clave y el resto de los datos como subdiccionario
-    with open(ruta, "r", encoding="latin-1") as climatico: #Abre el archivo que vamos a usar en modo lectura
-        for linea in climatico: #Recorremos cada línea del archivo
-            limpita= linea.strip() #Eliminamos los saltos o espacios en blanco de cada renglon
-            if not limpita: #Si hay una linea vacía, la función no hace nada y continua con la siguiente línea
-                continue
-            campos= [campo.strip() for campo in limpita.split(";")] #Como en el archivo los datos vienen separados por un ;, este codigo divide el renglon en partes, y con strip limpiamos los espacios en blanco de cada campo
-            estacion= campos[0] #El codigo asigna a cada variable el valor de cada campo, que ya habíamos separado con anterioridad, y que se encuentra en la lista campos
-            fecha= campos[1]
-            hora= campos[2]
-            estado= campos[3]
-            vista= campos[4] #no se como se dice bien
-            temperatura= campos[5]
-            sensacion= campos[6]
-            humedad= campos[7]
-            viento= campos[8]
-            presion= campos[9]
-            vientos= separar_viento(viento) #llama a la funcion separar viento para separar las lineas del viento en partes
-            fechas= parsear_fecha_hora(fecha, hora) #la funcion extrae el día, convierte el mes en español, y lo convierte en datetime, se pasa a almacenar un archivo completo de fecha y hora
-            horas= datetime.strptime(hora, "%H:%M").time() #Uso .time para que no salga una fecha cualquiera mas la hora, y solo se imprima la hora seleccionada en el archivo, como diccionario.
-            datos= { #Creación del diccionario interno, que contiene las 10 claves para que el codigo funcione
-                "fecha" : fechas,
-                "hora" : horas, 
-                "estado": estado,
-                "vista" : vista, 
-                "temperatura": temperatura, 
-                "sensacion": sensacion, 
-                "humedad": humedad, 
-                "direccion": vientos["direccion"],
-                "velocidad": vientos["velocidad"],
-                "presion": presion
-            }
-            diccionario[estacion]= datos #Guarda el diccionario de datos, utilizando la estacion como clave principal
+    try: 
+        archivo= open(ruta, "r", encoding="utf-8")#Abre el archivo que vamos a usar en modo lectura
+        lineas= archivo.readlines()
+        archivo.close()
+    except UnicodeDecodeError:
+        archivo= open(ruta, "r", encoding="latin-1")#Abre el archivo que vamos a usar en modo lectura
+        lineas= archivo.readlines()
+        archivo.close()
+    for linea in lineas: 
+
+        limpita= linea.strip() #Eliminamos los saltos o espacios en blanco de cada renglon
+        if not limpita: #Si hay una linea vacía, la función no hace nada y continua con la siguiente línea
+            continue
+        campos= [campo.strip() for campo in limpita.split(";")] #Como en el archivo los datos vienen separados por un ;, este codigo divide el renglon en partes, y con strip limpiamos los espacios en blanco de cada campo
+        estacion= campos[0] #El codigo asigna a cada variable el valor de cada campo, que ya habíamos separado con anterioridad, y que se encuentra en la lista campos
+        fecha= campos[1]
+        hora= campos[2]
+        estado= campos[3]
+        vista= campos[4] #no se como se dice bien
+        temperatura= campos[5]
+        sensacion= campos[6]
+        humedad= campos[7]
+        viento= campos[8]
+        presion= campos[9]
+        vientos= separar_viento(viento) #llama a la funcion separar viento para separar las lineas del viento en partes
+        union= f"{fecha}T{hora}" #Unimos la fecha y la hora en una sola variable
+        objeto= datetime.fromisoformat(union) 
+        fecha_iso= objeto.isoformat(timespec="minutes") #Con el objeto datetime, le damos el formato iso, y le decimos que solo nos muestre hasta los minutos
+        datos= { #Creación del diccionario interno, que contiene las 10 claves para que el codigo funcione
+            "fecha" : fecha_iso, 
+            "estado": estado,
+            "vista" : vista, 
+            "temperatura": temperatura, 
+            "sensacion": sensacion, 
+            "humedad": humedad, 
+            "direccion": vientos["direccion"],
+            "velocidad": vientos["velocidad"],
+            "presion": presion
+        }
+        diccionario[estacion]= datos #Guarda el diccionario de datos, utilizando la estacion como clave principal
     return diccionario
 
 
