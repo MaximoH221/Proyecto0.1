@@ -73,8 +73,7 @@ def leer_observaciones(ruta:str) -> dict:
         viento= campos[8]
         presion= campos[9]
         vientos= separar_viento(viento) #llama a la funcion separar viento para separar las lineas del viento en partes
-        union= f"{fecha}T{hora}" #Unimos la fecha y la hora en una sola variable
-        objeto= datetime.fromisoformat(union) 
+        objeto= parsear_fecha_hora(fecha, hora) #llama a la funcion parsear fecha y hora para convertir la fecha y hora en un objeto datetime 
         fecha_iso= objeto.isoformat(timespec="minutes") #Con el objeto datetime, le damos el formato iso, y le decimos que solo nos muestre hasta los minutos
         datos= { #Creación del diccionario interno, que contiene las 10 claves para que el codigo funcione
             "fecha" : fecha_iso, 
