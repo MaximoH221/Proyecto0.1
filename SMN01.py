@@ -52,6 +52,7 @@ if __name__ == "__main__":
         elif ruta.endswith(".json"):
             procesar_json(ruta)
     else:
-        print("Al parecer alguien ingreso más de un parametro...., muy mal, maxi te juzga desde el espacio por haber lanzado más de un parametro....")
+        print("Al parecer alguien ingreso más de un parametro...., muy mal, maxi te juzga desde el espacio, si a vos, pillín,  por pillín voy a mandar a scooby-doo a que te coma toda la comida de tu casa, pillín")
         print(".............")
+        print("chau pillín, nos vemos pillín")
     
